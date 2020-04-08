@@ -1,4 +1,5 @@
 # TODO: check if successful login
+require_relative 'category'
 require 'nokogiri'
 require 'mechanize'
 require 'csv'
@@ -19,30 +20,7 @@ page = agent.submit login_form
 
 # Below will print page showing information confirming that you have logged in.
 
-category = [
-    "api-management",
-    "chat",
-    "code-quality",
-    "code-review",
-    "mobile-ci",
-    "container-ci",
-    "dependency-management",
-    "deployment",
-    "ides",
-    "learning",
-    "localization",
-    "mobile",
-    "monitoring",
-    "project-management",
-    "publishing",
-    "recently-added",
-    "security",
-    "support",
-    "testing",
-    "utilities"
-]
-
-for cat in category
+for cat in @category
     CSV.open("#{cat}.csv", "w") do |csv|
         csv << ["Action", "Stars"]
         page = agent.get("https://github.com/marketplace?category=#{cat}&type=actions")
