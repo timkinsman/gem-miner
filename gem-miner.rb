@@ -1,6 +1,4 @@
 # TODO: check if successful login
-# TODO: Refactor to avoid suggested actions clash
-
 require 'nokogiri'
 require 'mechanize'
 require 'csv'
@@ -50,24 +48,18 @@ for cat in category
         page = agent.get("https://github.com/marketplace?category=#{cat}&type=actions")
 
         # First page
-
-        for i in 2..(page.search("div.px-3").length - 1)
-            if i > 21
-                break
-            end        
-            csv << [page.search("div.px-3")[i].search("h3.h4").text, page.search("div.px-3")[i].search("span.text-small").text.split.first]
+        cond = page.search("div.col-lg-9")[1].search("div.d-md-flex")[0].search("div.px-3") # Condense
+        for i in 0..(cond.length - 1)  
+            csv << [cond[i].search("h3.h4").text, cond[i].search("span.text-small").text.split.first]
         end
 
         # Subsequent pages
-
         while page.link_with(text: 'Next')
             link = page.link_with(text: 'Next')
             page = link.click
-            for i in 2..(page.search("div.px-3").length - 1)
-                if i > 21
-                    break
-                end
-                csv << [page.search("div.px-3")[i].search("h3.h4").text, page.search("div.px-3")[i].search("span.text-small").text.split.first]
+            cond = page.search("div.col-lg-9")[1].search("div.d-md-flex")[0].search("div.px-3") # Condense
+            for i in 0..(cond.length - 1)
+                csv << [cond[i].search("h3.h4").text, cond[i].search("span.text-small").text.split.first]
             end
         end
     end
