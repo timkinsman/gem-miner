@@ -1,4 +1,3 @@
-# TODO: check if successful login
 require_relative 'category'
 require 'nokogiri'
 require 'mechanize'
@@ -20,12 +19,22 @@ page = agent.submit login_form
 
 # Below will print page showing information confirming that you have logged in.
 
+if agent.get('https://github.com/').search('a.HeaderMenu-link').length != 0
+    abort('unable to login. please try again')
+end
+
+print "login successful"
+
+time = Time.new.strftime("%Y-%m-%d")
+Dir.mkdir(time) unless Dir.exist?(time)
+
 for cat in @category
-    CSV.open("#{cat}.csv", "w") do |csv|
+    print "\nweb scraping #{cat}..."
+    CSV.open("#{time}/#{cat}.csv", "w") do |csv|
         csv << ["Action", "Stars"]
-        page = agent.get("https://github.com/marketplace?category=#{cat}&type=actions")
 
         # First page
+        page = agent.get("https://github.com/marketplace?category=#{cat}&type=actions")
         cond = page.search("div.col-lg-9")[1].search("div.d-md-flex")[0].search("div.px-3") # Condense
         for i in 0..(cond.length - 1)  
             csv << [cond[i].search("h3.h4").text, cond[i].search("span.text-small").text.split.first]
@@ -41,4 +50,5 @@ for cat in @category
             end
         end
     end
+    print "DONE!"
 end
