@@ -4,7 +4,7 @@ require 'mechanize'
 require 'csv'
 
 if ARGV.length != 2
-    abort("usage: ruby ./gem-miner _login _password")
+    abort("usage: ruby ./gem-miner github_login github_password")
 end
 
 agent = Mechanize.new
