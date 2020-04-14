@@ -9,6 +9,6 @@ In the project directory, you can run:
 Installs the gems required for gem-miner.<br />
 See Gemfile for the listed gems.
 
-### `ruby gem-miner _github_login _github_password`
+### `ruby gem_miner _github_login _github_password`
 
 Runs the web scrapper.
