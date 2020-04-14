@@ -27,12 +27,15 @@ Dir.mkdir(time) unless Dir.exist?(time)
 for cat in @category
   print "\nweb scraping #{cat}..."
   CSV.open("#{time}/#{cat}.csv", 'w') do |csv|
-    csv << ['Action', 'Stars']
+    csv << %w(Action Stars)
 
     page = agent.get("https://github.com/marketplace?category=#{cat}&type=actions")
     cond = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0].search('div.px-3')
-    for i in 0..(cond.length - 1)  
-      csv << [cond[i].search('h3.h4').text, cond[i].search('span.text-small').text.split.first]
+    for i in 0..(cond.length - 1)
+      csv << [
+        cond[i].search('h3.h4').text,
+        cond[i].search('span.text-small').text.split.first
+      ]
     end
 
     while page.link_with(text: 'Next')
@@ -40,7 +43,10 @@ for cat in @category
       page = link.click
       cond = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0].search('div.px-3')
       for i in 0..(cond.length - 1)
-        csv << [cond[i].search('h3.h4').text, cond[i].search('span.text-small').text.split.first]
+        csv << [
+          cond[i].search('h3.h4').text,
+          cond[i].search('span.text-small').text.split.first
+        ]
       end
     end
   end
