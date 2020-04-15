@@ -37,7 +37,6 @@ PLATFORMS
 DEPENDENCIES
   csv
   mechanize
-  nokogiri
 
 BUNDLED WITH
    1.17.2

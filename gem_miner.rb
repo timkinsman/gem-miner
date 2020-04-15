@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 require_relative 'category'
-require 'nokogiri'
 require 'mechanize'
 require 'csv'
+
+def web_crawl(page)
+  container = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0]
+  container.search('div.px-3')
+end
 
 def web_scrape(action_div, csv)
   (0..(action_div.length - 1)).each do |i|
@@ -12,11 +16,6 @@ def web_scrape(action_div, csv)
       action_div[i].search('span.text-small').text.split.first
     ]
   end
-end
-
-def web_crawl(page)
-  container = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0]
-  container.search('div.px-3')
 end
 
 abort('usage: ruby gem_miner GH_login GH_pass') unless ARGV.length == 2
@@ -30,7 +29,8 @@ login_form.field_with(name: 'password').value = ARGV[1]
 page = agent.submit login_form
 
 signin_link = agent.get('https://github.com/').search('a.HeaderMenu-link')
-abort('unable to login. please try again') unless signin_link.empty?
+
+abort('unable to login. please try again') unless signin_link.length == 0
 print 'login successful'
 
 time = Time.new.strftime('%Y-%m-%d')
