@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 @category = %w[
   api-management
   chat

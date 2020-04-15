@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'category'
 require 'nokogiri'
 require 'mechanize'
@@ -14,8 +16,7 @@ end
 
 def web_crawl(page)
   container = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0]
-  action_div = container.search('div.px-3')
-  return action_div
+  container.search('div.px-3')
 end
 
 abort('usage: ruby gem_miner GH_login GH_pass') unless ARGV.length == 2
