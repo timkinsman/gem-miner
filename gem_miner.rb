@@ -3,9 +3,7 @@ require 'nokogiri'
 require 'mechanize'
 require 'csv'
 
-if ARGV.length != 2
-  abort('usage: ruby gem_miner github_login github_password')
-end
+abort('usage: ruby gem_miner GH_login GH_pass') unless ARGV.length == 2
 
 agent = Mechanize.new
 
@@ -50,5 +48,5 @@ Dir.mkdir(time) unless Dir.exist?(time)
       end
     end
   end
-  print 'DONE!'
+  print 'complete!'
 end
