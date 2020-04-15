@@ -30,7 +30,7 @@ page = agent.submit login_form
 
 signin_link = agent.get('https://github.com/').search('a.HeaderMenu-link')
 
-abort('unable to login. please try again') unless signin_link.length == 0
+abort('unable to login. please try again') unless signin_link.length.zero?
 print 'login successful'
 
 time = Time.new.strftime('%Y-%m-%d')
