@@ -3,15 +3,19 @@ require 'nokogiri'
 require 'mechanize'
 require 'csv'
 
-def web_crawl(page, csv)
-  container = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0]
-  action_div = container.search('div.px-3')
+def web_scrape(action_div, csv)
   (0..(action_div.length - 1)).each do |i|
     csv << [
       action_div[i].search('h3.h4').text,
       action_div[i].search('span.text-small').text.split.first
     ]
   end
+end
+
+def web_crawl(page)
+  container = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0]
+  action_div = container.search('div.px-3')
+  return action_div
 end
 
 abort('usage: ruby gem_miner GH_login GH_pass') unless ARGV.length == 2
@@ -36,13 +40,16 @@ Dir.mkdir(time) unless Dir.exist?(time)
   CSV.open("#{time}/#{cat}.csv", 'w') do |csv|
     csv << %w[Action Stars]
 
-    page = agent.get("https://github.com/marketplace?category=#{cat}&type=actions")
-    web_crawl(page, csv)
+    url = "https://github.com/marketplace?category=#{cat}&type=actions"
+    page = agent.get(url)
+    action_div = web_crawl(page)
+    web_scrape(action_div, csv)
 
     while page.link_with(text: 'Next')
       link = page.link_with(text: 'Next')
       page = link.click
-      web_crawl(page, csv)
+      action_div = web_crawl(page)
+      web_scrape(action_div, csv)
     end
   end
   print 'complete!'
