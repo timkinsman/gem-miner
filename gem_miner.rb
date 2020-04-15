@@ -3,6 +3,17 @@ require 'nokogiri'
 require 'mechanize'
 require 'csv'
 
+def web_crawl(page, csv)
+  container = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0]
+  action_div = container.search('div.px-3')
+  (0..(action_div.length - 1)).each do |i|
+    csv << [
+      action_div[i].search('h3.h4').text,
+      action_div[i].search('span.text-small').text.split.first
+    ]
+  end
+end
+
 abort('usage: ruby gem_miner GH_login GH_pass') unless ARGV.length == 2
 
 agent = Mechanize.new
@@ -26,26 +37,12 @@ Dir.mkdir(time) unless Dir.exist?(time)
     csv << %w[Action Stars]
 
     page = agent.get("https://github.com/marketplace?category=#{cat}&type=actions")
-    container = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0]
-    action_div = container.search('div.px-3')
-    (0..(action_div.length - 1)).each do |i|
-      csv << [
-        action_div[i].search('h3.h4').text,
-        action_div[i].search('span.text-small').text.split.first
-      ]
-    end
+    web_crawl(page, csv)
 
     while page.link_with(text: 'Next')
       link = page.link_with(text: 'Next')
       page = link.click
-      container = page.search('div.col-lg-9')[1].search('div.d-md-flex')[0]
-      action_div = container.search('div.px-3')
-      (0..(action_div.length - 1)).each do |i|
-        csv << [
-          action_div[i].search('h3.h4').text,
-          action_div[i].search('span.text-small').text.split.first
-        ]
-      end
+      web_crawl(page, csv)
     end
   end
   print 'complete!'
